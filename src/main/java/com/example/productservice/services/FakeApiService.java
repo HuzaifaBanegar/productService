@@ -1,15 +1,20 @@
 package com.example.productservice.services;
 
-import com.example.productservice.dtos.CreateProductDTO;
-import com.example.productservice.dtos.FakeStoreCreateDto;
+import com.example.productservice.dtos.CategoryDTO;
+import com.example.productservice.dtos.FakeStoreCreateDTO;
 import com.example.productservice.dtos.FakeStoreDTO;
+import com.example.productservice.errorHandlers.ProductNotFoundException;
 import com.example.productservice.models.Category;
 import com.example.productservice.models.Product;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class FakeApiService implements ProductService{
@@ -20,14 +25,27 @@ public class FakeApiService implements ProductService{
     }
 
     @Override
-    public Product getProductDetails(Long id) {
-        FakeStoreDTO fakeStoreDTO = restTemplate.getForObject("https://fakestoreapi.com/products/"+ id , FakeStoreDTO.class);
+    public Product getProductDetails(Long id) throws ProductNotFoundException{
+
+        ResponseEntity<FakeStoreDTO> responseEntity =  restTemplate.getForEntity("https://fakestoreapi.com/products/"+ id , FakeStoreDTO.class);
+
+        if(responseEntity.getStatusCode() == HttpStatusCode.valueOf(404)){
+            //Do something
+        }else if(responseEntity.getStatusCode() == HttpStatusCode.valueOf(500)){
+            //Handle Exception
+        }
+
+        FakeStoreDTO fakeStoreDTO = responseEntity.getBody();
+        if(fakeStoreDTO == null){
+            throw new ProductNotFoundException("Product Not Found");
+        }
+
         return fakeStoreDTO.toProduct();
     }
 
     @Override
     public Product createProduct(String title, String description, Double price, String category, String image) {
-        FakeStoreCreateDto requestDTO = new FakeStoreCreateDto();
+        FakeStoreCreateDTO requestDTO = new FakeStoreCreateDTO();
         requestDTO.setTitle(title);
         requestDTO.setDescription(description);
         requestDTO.setPrice(price);
@@ -49,5 +67,21 @@ public class FakeApiService implements ProductService{
         }
 
         return products;
+    }
+
+
+
+    @Override
+    public List<Category> getAllCategories() {
+        String[] categoryNames = restTemplate.getForObject("https://fakestoreapi.com/products/categories", String[].class);
+
+        List<Category> categories = new ArrayList<>();
+        for(String categoryName : categoryNames){
+            CategoryDTO category = new CategoryDTO();
+            category.setName(categoryName);
+            categories.add(category.toCategory());
+        }
+
+        return categories;
     }
 }
