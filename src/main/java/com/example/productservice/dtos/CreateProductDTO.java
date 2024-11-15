@@ -14,5 +14,4 @@ public class CreateProductDTO {
     private String image;
     private String category;
 
-
 }

@@ -6,6 +6,8 @@ import com.example.productservice.dtos.FakeStoreDTO;
 import com.example.productservice.errorHandlers.ProductNotFoundException;
 import com.example.productservice.models.Category;
 import com.example.productservice.models.Product;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -54,6 +56,7 @@ public class FakeApiService implements ProductService{
 
         FakeStoreDTO responseDto = restTemplate.postForObject("https://fakestoreapi.com/products", requestDTO, FakeStoreDTO.class);
 
+
         return responseDto.toProduct();
 
     }
@@ -67,6 +70,27 @@ public class FakeApiService implements ProductService{
         }
 
         return products;
+    }
+
+    @Override
+    public Product updateProduct(Long id, String title, String description, Double price, String category, String image) {
+        FakeStoreCreateDTO requestDTO = new FakeStoreCreateDTO();
+        requestDTO.setTitle(title);
+        requestDTO.setDescription(description);
+        requestDTO.setPrice(price);
+        requestDTO.setCategory(category);
+        requestDTO.setImage(image);
+
+        HttpEntity<FakeStoreCreateDTO> requestEntity = new HttpEntity<>(requestDTO);
+        ResponseEntity<FakeStoreDTO> response = restTemplate.exchange(
+                "https://fakestoreapi.com/products/" + id,
+                HttpMethod.PATCH,
+                requestEntity,
+                FakeStoreDTO.class
+        );
+
+        return response.getBody().toProduct();
+
     }
 
 

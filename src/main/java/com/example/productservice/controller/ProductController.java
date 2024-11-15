@@ -40,6 +40,17 @@ public class ProductController {
         );
     }
 
+    @PatchMapping("/products/{id}")
+    public Product editProduct(@PathVariable("id") Long id , @RequestBody CreateProductDTO requestDto ) {
+        return productService.updateProduct(
+                id,
+                requestDto.getTitle(),
+                requestDto.getDescription(),
+                requestDto.getPrice(),
+                requestDto.getCategory(),
+                requestDto.getImage());
+    }
+
     @GetMapping("/category")
     public List<Category> getAllCategories() {
         return productService.getAllCategories();
