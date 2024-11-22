@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+@Service("fakeAPIProductService")
 public class FakeApiService implements ProductService{
 
     private RestTemplate restTemplate;
@@ -71,6 +71,11 @@ public class FakeApiService implements ProductService{
 
         return products;
     }
+
+//    @Override
+//    public Product updateProduct(Long id, String title, String description, Double price, String category, String image) {
+//        return null;
+//    }
 
     @Override
     public Product updateProduct(Long id, String title, String description, Double price, String category, String image) {

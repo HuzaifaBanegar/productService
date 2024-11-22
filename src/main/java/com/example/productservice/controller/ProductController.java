@@ -6,6 +6,7 @@ import com.example.productservice.errorHandlers.ProductNotFoundException;
 import com.example.productservice.models.Category;
 import com.example.productservice.models.Product;
 import com.example.productservice.services.ProductService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,7 @@ import java.util.List;
 @RestController
 public class ProductController {
     private ProductService productService;
-    public ProductController(ProductService productService) {
+    public ProductController(@Qualifier("databseProductService") ProductService productService) {
         this.productService = productService;
     }
 
