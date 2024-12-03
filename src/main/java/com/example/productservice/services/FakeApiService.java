@@ -11,6 +11,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -83,14 +84,27 @@ public class FakeApiService implements ProductService{
         requestDTO.setImage(image);
 
         HttpEntity<FakeStoreCreateDTO> requestEntity = new HttpEntity<>(requestDTO);
-        ResponseEntity<FakeStoreDTO> response = restTemplate.exchange(
-                "https://fakestoreapi.com/products/" + id,
-                HttpMethod.PATCH,
-                requestEntity,
-                FakeStoreDTO.class
-        );
 
-        return response.getBody().toProduct();
+        try{
+            ResponseEntity<FakeStoreDTO> response = restTemplate.exchange(
+                    "https://fakestoreapi.com/products/" + id,
+                    HttpMethod.PATCH,
+                    requestEntity,
+                    FakeStoreDTO.class
+            );
+
+            if(response.getBody()==null){
+                throw new RuntimeException("Failed to update product: No response body");
+            }
+
+            return response.getBody().toProduct();
+        } catch (HttpClientErrorException e) {
+            // Handle HTTP errors
+            throw new RuntimeException("HTTP error while updating product: " + e.getStatusCode(), e);
+        } catch (Exception e) {
+            // Handle other exceptions
+            throw new RuntimeException("Unexpected error while updating product", e);
+        }
 
     }
 
