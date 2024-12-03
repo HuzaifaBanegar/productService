@@ -18,6 +18,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Product getProductByTitleAndCategory_name(String title, String categoryName);
 
+    @Query(value = "select * from product", nativeQuery = true)
+    List<Product> findAllProducts();
+
+
     //HQL Query - Writing query in HQL way
     @Query("select p from Product p where p.category.id = :id")
     List<Product> getProductsByCategoryId(@Param("id") Long id);

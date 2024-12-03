@@ -72,10 +72,6 @@ public class FakeApiService implements ProductService{
         return products;
     }
 
-//    @Override
-//    public Product updateProduct(Long id, String title, String description, Double price, String category, String image) {
-//        return null;
-//    }
 
     @Override
     public Product updateProduct(Long id, String title, String description, Double price, String category, String image) {
@@ -112,5 +108,23 @@ public class FakeApiService implements ProductService{
         }
 
         return categories;
+    }
+
+    @Override
+    public Product deleteProduct(Long id) throws ProductNotFoundException {
+        final String URL = "https://fakestoreapi.com/products/" + id;
+        try{
+            FakeStoreDTO requestDTO = restTemplate.getForObject(URL, FakeStoreDTO.class);
+
+            if(requestDTO == null){
+                throw  new ProductNotFoundException("Product not found");
+            }
+
+            restTemplate.delete(URL);
+            return requestDTO.toProduct();
+        }catch (Exception e){
+            throw new ProductNotFoundException("Product Not Found");
+        }
+
     }
 }

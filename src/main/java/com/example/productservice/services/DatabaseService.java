@@ -58,7 +58,12 @@ public class DatabaseService implements ProductService{
 
     @Override
     public List<Product> getAllProducts() {
-        return List.of();
+        List<Product> productList = productRepository.findAllProducts();
+        System.out.println("All Products: "+ productList);
+        if(productList.isEmpty()){
+            System.out.println("No products found");
+        }
+        return productList;
     }
 
     @Override
@@ -69,6 +74,15 @@ public class DatabaseService implements ProductService{
 
     @Override
     public List<Category> getAllCategories() {
-        return List.of();
+        List<Category> categories = categoryRepository.findAll();
+        if(categories.isEmpty()){
+            System.out.println("Category not found");
+        }
+        return categories;
+    }
+
+    @Override
+    public Product deleteProduct(Long id) {
+        return null;
     }
 }

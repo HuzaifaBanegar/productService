@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 public class ProductController {
     private ProductService productService;
-    public ProductController(@Qualifier("databseProductService") ProductService productService) {
+    public ProductController(@Qualifier("fakeAPIProductService") ProductService productService) {
         this.productService = productService;
     }
 
@@ -50,6 +50,11 @@ public class ProductController {
                 requestDto.getPrice(),
                 requestDto.getCategory(),
                 requestDto.getImage());
+    }
+
+    @DeleteMapping("/products/{id}")
+    public Product deleteProduct(@PathVariable("id") Long id) throws ProductNotFoundException {
+        return productService.deleteProduct(id);
     }
 
     @GetMapping("/category")
