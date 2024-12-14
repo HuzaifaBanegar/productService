@@ -117,4 +117,9 @@ public class DatabaseService implements ProductService{
         productRepository.delete(productToDelete);
         return productToDelete;
     }
+
+    @Override
+    public List<Product> getProductsByCategory(String category) {
+        return List.of();
+    }
 }

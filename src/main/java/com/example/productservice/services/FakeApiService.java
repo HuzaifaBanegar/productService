@@ -27,6 +27,9 @@ public class FakeApiService implements ProductService{
         this.restTemplate = restTemplate;
     }
 
+
+    //PRODUCTS APIs------------------------------------------------------------------------------------------------
+
     @Override
     public Product getProductDetails(Long id) throws ProductNotFoundException{
 
@@ -108,22 +111,6 @@ public class FakeApiService implements ProductService{
 
     }
 
-
-
-    @Override
-    public List<Category> getAllCategories() {
-        String[] categoryNames = restTemplate.getForObject("https://fakestoreapi.com/products/categories", String[].class);
-
-        List<Category> categories = new ArrayList<>();
-        for(String categoryName : categoryNames){
-            CategoryDTO category = new CategoryDTO();
-            category.setName(categoryName);
-            categories.add(category.toCategory());
-        }
-
-        return categories;
-    }
-
     @Override
     public Product deleteProduct(Long id) throws ProductNotFoundException {
         final String URL = "https://fakestoreapi.com/products/" + id;
@@ -141,9 +128,49 @@ public class FakeApiService implements ProductService{
             throw new RuntimeException(e);
         }
 
+    }
 
+    //CATEGORY APIs------------------------------------------------------------------------------------------------
 
+    @Override
+    public List<Category> getAllCategories() {
+        String[] categoryNames = restTemplate.getForObject("https://fakestoreapi.com/products/categories", String[].class);
 
+        List<Category> categories = new ArrayList<>();
+        for(String categoryName : categoryNames){
+            CategoryDTO category = new CategoryDTO();
+            category.setName(categoryName);
+            categories.add(category.toCategory());
+        }
+
+        return categories;
+    }
+
+    @Override
+    public List<Product> getProductsByCategory(String category) throws ProductNotFoundException {
+        final String URL = "https://fakestoreapi.com/products/category/" + category;
+        try{
+            ResponseEntity<FakeStoreDTO[]> responseEntity = restTemplate.exchange(
+                    URL,
+                    HttpMethod.GET,
+                    null,
+                    FakeStoreDTO[].class
+            );
+
+            FakeStoreDTO[] productList = responseEntity.getBody();
+
+            if(productList == null){
+                throw new ProductNotFoundException("Products Not Found");
+            }else{
+                List<Product> products = new ArrayList<>();
+                for (FakeStoreDTO fakeStoreDTO : productList) {
+                    products.add(fakeStoreDTO.toProduct());
+                }
+                return products;
+            }
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
 
     }
 }

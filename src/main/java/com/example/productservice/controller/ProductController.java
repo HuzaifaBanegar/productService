@@ -41,6 +41,12 @@ public class ProductController {
         );
     }
 
+    @GetMapping("/products/category/{category}")
+    public List<Product> getProductsByCategory (@PathVariable("category")String category) throws ProductNotFoundException {
+        return productService.getProductsByCategory(category);
+    }
+
+
     @PatchMapping("/products/{id}")
     public Product editProduct(@PathVariable("id") Long id , @RequestBody CreateProductDTO requestDto ) {
         return productService.updateProduct(
