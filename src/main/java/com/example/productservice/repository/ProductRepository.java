@@ -25,12 +25,17 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 
     //HQL Query - Writing query in HQL way
-    @Query("select p from Product p where p.category.id = :id")
-    List<Product> getProductsByCategoryId(@Param("id") Long id);
+//    @Query("select p from Product p where p.category.id = :id")
+//    List<Product> getProductsByCategoryId(@Param("id") Long id);
 
     //SQL Query - Writing query in our old MySQL way
    @Query(value = "select p.title, p.description from product p where id= :id", nativeQuery = true)
    ProductTitleAndDescriptions getAllProductsTitleAndDescription(@Param("id") Long id);
 
     Page<Product> findByTitleContaining(String query, Pageable pageable);
+
+    //HQL Query
+    @Query("SELECT p FROM Product p WHERE p.category.name = :query")
+    List<Product> getAllProductsByCategory(@Param("query") String query);
+
 }

@@ -120,6 +120,7 @@ public class DatabaseService implements ProductService{
 
     @Override
     public List<Product> getProductsByCategory(String category) {
-        return List.of();
+        List<Product> products = productRepository.getAllProductsByCategory(category);
+        return products;
     }
 }
