@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 public class ProductController {
     private ProductService productService;
-    public ProductController(@Qualifier("databseProductService") ProductService productService) {
+    public ProductController(@Qualifier("fakeAPIProductService") ProductService productService) {
         this.productService = productService;
     }
 

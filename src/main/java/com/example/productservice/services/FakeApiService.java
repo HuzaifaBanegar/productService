@@ -127,18 +127,23 @@ public class FakeApiService implements ProductService{
     @Override
     public Product deleteProduct(Long id) throws ProductNotFoundException {
         final String URL = "https://fakestoreapi.com/products/" + id;
-        try{
-            FakeStoreDTO requestDTO = restTemplate.getForObject(URL, FakeStoreDTO.class);
 
-            if(requestDTO == null){
-                throw  new ProductNotFoundException("Product not found");
+        try {
+            HttpEntity<FakeStoreDTO> responseEntity = restTemplate.exchange(URL, HttpMethod.DELETE, null, FakeStoreDTO.class);
+            FakeStoreDTO deletedProduct = responseEntity.getBody();
+
+            if(deletedProduct == null){
+                throw new ProductNotFoundException("Product Not Found");
             }
 
-            restTemplate.delete(URL);
-            return requestDTO.toProduct();
-        }catch (Exception e){
-            throw new ProductNotFoundException("Product Not Found");
+            return deletedProduct.toProduct();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+
+
+
+
 
     }
 }
